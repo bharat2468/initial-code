@@ -28,7 +28,7 @@ const queryClient = new QueryClient();
 const nestedAdminRoute = {
 	path: "admin",
 	element: (
-		<Protected authentication={true} adminOnly={true}>
+		<Protected authentication={false} adminOnly={false}>
 			<AdminDashboard />
 		</Protected>
 	),
@@ -77,7 +77,7 @@ const router = createBrowserRouter([
 			{
 				path: "/profile",
 				element: (
-					<Protected authentication={true}>
+					<Protected authentication={false}>
 						<Profile />
 					</Protected>
 				),

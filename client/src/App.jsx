@@ -5,8 +5,22 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser, refreshToken } from "./api/users";
 import { login, logout } from "./store/authSlice";
 import { useEffect } from "react";
-
+import {gentext} from "./services/operations/cloudfareapi"
 function App() {
+    const [input, setInput] = useState('');
+    const [data, setResponse] = useState('');
+    
+    const handleSubmit = async (e)=>{
+        e.preventDefault();
+        try {
+            // can also create a slice for this and use dispatch for setting the data globally
+            const response = await gentext(input);
+            setResponse(response.result);
+        } catch (error) {
+            console.log(error);
+            setResponse('An error occurred while fetching the response.');
+        }
+    }
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
 
@@ -32,7 +46,6 @@ function App() {
         if (isLoading) {
             return; // Handle loading state separately
         }
-
         if (isError) {
             dispatch(logout());
 			if (error.response?.data?.message === "JWT expired") {
@@ -51,13 +64,29 @@ function App() {
             </div>
         );
     }
-
     return (
-        <div className="wrapper min-h-screen">
-            <Header />
-            <Outlet />
-            <Footer />
+        <div>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Enter your question"
+        />
+        <button type="submit">Submit</button>
+      </form>
+      {response && (
+        <div>
+          <h3>Response:</h3>
+            <p>{data}</p>
         </div>
+      )}
+    </div>
+        // <div className="wrapper min-h-screen">
+        //     <Header />
+        //     <Outlet />
+        //     <Footer />
+        // </div>
     );
 }
 
